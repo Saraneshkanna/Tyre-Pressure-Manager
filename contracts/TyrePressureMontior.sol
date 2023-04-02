@@ -38,9 +38,13 @@ contract TyrePressureMonitor
         tyrePressureReadings[tyreIndex] = newPressure;
         tyrePressureHistory[tyreIndex].push(newPressure);
         // Check if the new pressure falls below the alert threshold
-        if (newPressure < tyrePressureAlertThreshold && oldPressure >= tyrePressureAlertThreshold)
+        if (newPressure < tyrePressureAlertThreshold)
         {
             emit TyrePressureAlert(tyreIndex, newPressure);
+        }
+        else
+        {
+            emit TyrePressureUpdated(tyreIndex, newPressure);(tyreIndex, newPressure);
         }
     }
 
@@ -52,7 +56,7 @@ contract TyrePressureMonitor
 
     function getTyrePressureHistory(uint8 tyreIndex) public view validTyreIndex(tyreIndex) returns (uint16[] memory)
     {
-    return tyrePressureHistory[tyreIndex];
+        return tyrePressureHistory[tyreIndex];
     }
 }
 
