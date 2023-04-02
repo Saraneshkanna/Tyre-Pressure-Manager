@@ -1,18 +1,19 @@
 import React,{useState, useEffect} from "react";
 import Web3 from "web3";
 import TyrePressureMonitor from "./contracts/TyrePressureMonitor.json";
+import './BKTApp.css';
 
 function App(){
   const [tyreIndex, setTyreIndex] = useState(0);
   const [newPressure, setNewPressure] = useState(0);
   const [alertThreshold, setAlertThreshold] = useState(0);
-  const [tyrePressureReadings, setTyrePressureReadings] = useState(null);
+  const [tyrePressureReadings, setTyrePressureReadings] = useState([Math.round(Math.random() * 25),Math.round(Math.random() * 25),Math.round(Math.random() * 25),Math.round(Math.random() * 25)]);
   const [tyrePressure, setTyrePressure] = useState(0);
   const [tyrePressureHistory, setTyrePressureHistory] = useState([]);
-  const [tyrePressureInput, setTyrePressureInput] = useState('');
+  const [tyrePressureInput, setTyrePressureInput] = useState('0');
 
   const[contract, setContract] = useState(null);
-  const[accounts, setAccount] = useState("");
+  const[account, setAccount] = useState("");
 
   useEffect(() => {
     const init = async() => {
@@ -36,7 +37,7 @@ function App(){
         setContract(tyrePressureMonitorContract);
 
         const tyrePressureReadings = await contract.methods
-          .tyrePressureReadings(0)
+          .tyrePressureReadings()
           .call();
         setTyrePressureReadings(tyrePressureReadings);
       } 
@@ -47,14 +48,13 @@ function App(){
     init();
   }, []);
 
-  const updateTyrePressure = async () => {
-    try {
-      await contract.updateTyrePressure(tyreIndex, newPressure);
-      console.log("Tyre pressure updated!");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  function updateTyrePressure(tyreIndex, newPressure) {
+    setTyrePressureReadings(prevReadings => {
+      const newReadings = [...prevReadings];
+      newReadings[tyreIndex] = newPressure;
+      return newReadings;
+    });
+  }
 
   const getTyrePressure = async () => {
     try {
@@ -70,21 +70,27 @@ function App(){
 
 
   const handleSetTyrePressure = async () => {
-    await contract.methods.updateTyrePressure(tyreIndex, tyrePressureInput).send({ from: accounts[0] });
+    await contract.methods.updateTyrePressure(tyreIndex, tyrePressureInput).send({ from: account });
+    updateTyrePressure(tyreIndex,tyrePressureInput);
     setTyrePressureInput(0);
   };
 
   const handleChangeTyreIndex = (event) => {
     setTyreIndex(parseInt(event.target.value));
+    console.log("Tyre Index Changed");
   };
 
   const handleChangeTyrePressureInput = (event) => {
     setTyrePressureInput(parseInt(event.target.value));
+    console.log("Tyre Pressure Input Changed");
   };
 
   return (
     <div>
       <h1>Tyre Pressure Monitoring System</h1>
+      {/* <h2>Account: {account}</h2>
+      <h2>Current Tyre Index: {tyreIndex}</h2>
+      <h2>Current Tyre Input: {tyrePressureInput}</h2> */}
       <h2>Current Tyre Pressures</h2>
       <ul>
         <li>Tyre 0: {tyrePressureReadings[0]}</li>
