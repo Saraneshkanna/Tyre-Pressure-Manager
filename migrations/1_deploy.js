@@ -1,5 +1,6 @@
-const counter = artifacts.require('../contracts/TyrePressureMonitor.sol');
+const monitor = artifacts.require('../contracts/TyrePressureMonitor.sol');
+
 module.exports = function(deployer)
 {
-    deployer.deploy(counter);
+    deployer.deploy(monitor);
 }

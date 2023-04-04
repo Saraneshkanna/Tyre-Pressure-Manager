@@ -6,7 +6,7 @@ contract TyrePressureMonitor
     // Stores the current tyre pressure reading for each tyre
     mapping(uint8 => uint16) public tyrePressureReadings;
     //mapping(uint8 => uint16) public tyrePressureAlertThresholds;
-    uint16 public tyrePressureAlertThreshold;
+    uint16 public tyrePressureAlertThreshold = 10;
     mapping(uint8 => uint16[]) public tyrePressureHistory;
 
 
@@ -44,7 +44,7 @@ contract TyrePressureMonitor
         }
         else
         {
-            emit TyrePressureUpdated(tyreIndex, newPressure);(tyreIndex, newPressure);
+            emit TyrePressureUpdated(tyreIndex, newPressure);
         }
     }
 

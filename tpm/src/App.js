@@ -115,15 +115,14 @@ function App(){
   
   const handleSetPressureThreshold = async () => {
     // const value = parseInt(pressureThresholdInput);
-    await contract.methods.setPressureThreshold(pressureThreshold).send({ from: account });
+    await contract.methods.setPressureThreshold(pressureThresholdInput).send({ from: account });
     const threshold = await contract.methods.getTyrePressureThreshold().call();
     setPressureThreshold(threshold);
     console.log("Pressure Threshold:", pressureThreshold);
-    setPressureThresholdInput(null);
+    setPressureThresholdInput('');
   };
 
   const handleSetTyrePressure = async () => {
-      window.alert("Punda Less than");
       await contract.methods.updateTyrePressure(tyreIndex, tyrePressureInput).send({ from: account });
       updateTyrePressure(tyreIndex,tyrePressureInput);
       setTyrePressureInput(0);
@@ -140,8 +139,8 @@ function App(){
   };
 
   const handleThresholdInput = (event) => {
-    setPressureThreshold(parseInt(event.target.value));
-    console.log("Current Threshold Input:", pressureThreshold);
+    setPressureThresholdInput(parseInt(event.target.value));
+    console.log("Current Threshold Input:", pressureThresholdInput);
   }
 
   const getTyrePressureHistory = async (tyreIndex) => {
@@ -151,21 +150,50 @@ function App(){
 
 
   return (
-    <div>
+  <div class="parent">
+    <div class="s1block">
       <h1>Tyre Pressure Monitoring System</h1>
       <h2>Account: {account}</h2>
+      <label>
+            Tyre Pressure Alert Threshold:
+            <input
+              type="number"
+              value={pressureThresholdInput}
+              onChange={handleThresholdInput}
+              className="input-box"
+            />
+        </label>
+        <button onClick={handleSetPressureThreshold}>Set Pressure Threshold</button>
+    </div>
+    {/* <div class="s1block">
       <h2>Current Tyre Index: {tyreIndex}</h2>
       <h2>Current Tyre Input: {tyrePressureInput}</h2>
-       <h2>Current Tyre Pressure Alert Threshold: {pressureThreshold}</h2>
-      <h2>Current Tyre Pressures</h2>
-      <ul>
-        <li>Tyre 0: {tyrePressureReadings[0]}</li>
-        <li>Tyre 1: {tyrePressureReadings[1]}</li>
-        <li>Tyre 2: {tyrePressureReadings[2]}</li>
-        <li>Tyre 3: {tyrePressureReadings[3]}</li>
-      </ul>
-      <h2>Update Tyre Pressure</h2>
-      <div>
+    </div> */}
+    <div class="container">
+      <div class="left">
+        <h2>Current Tyre Pressures</h2>
+        <ul>
+          <li>
+            Tyre 0: <progress value={tyrePressureReadings[0]} max={pressureThreshold} />
+            {tyrePressureReadings[0]}
+          </li>
+          <li>
+            Tyre 1: <progress value={tyrePressureReadings[1]} max={pressureThreshold} />
+            {tyrePressureReadings[1]}
+          </li>
+          <li>
+            Tyre 2: <progress value={tyrePressureReadings[2]} max={pressureThreshold} />
+            {tyrePressureReadings[2]}
+          </li>
+          <li>
+            Tyre 3: <progress value={tyrePressureReadings[3]} max={pressureThreshold} />
+            {tyrePressureReadings[3]}
+          </li>
+        </ul>
+        <h2>Current Tyre Pressure Alert Threshold: {pressureThreshold}</h2>
+      </div>
+      <div class="right">
+        <h2>Update Tyre Pressure</h2>
         <label>
           Tyre Index:
           <select value={tyreIndex} onChange={handleChangeTyreIndex}>
@@ -174,45 +202,33 @@ function App(){
             <option value={2}>Tyre 2</option>
             <option value={3}>Tyre 3</option>
           </select>
+          <label>
+            Tyre Pressure:
+            <input type="number" value={tyrePressureInput} onChange={handleChangeTyrePressureInput} />
+          </label>
+          <button onClick={handleSetTyrePressure}>Set Tyre Pressure</button>  
         </label>
       </div>
-      <div>
-        <label>
-          Tyre Pressure:
-          <input type="number" value={tyrePressureInput} onChange={handleChangeTyrePressureInput} />
-        </label>
-      </div>
-      <button onClick={handleSetTyrePressure}>Set Tyre Pressure</button>
-      <div>
-        <label>
-          Tyre Pressure Alert Threshold:
-          <input
-            type="number"
-            value={pressureThresholdInput}
-            onChange={handleThresholdInput}
-          />
-        </label>
-      </div>
-      <button onClick={handleSetPressureThreshold}>Set Pressure Threshold</button>
-
-    
-      <h1>Tyre Pressure Events</h1>
-      <h2>TyrePressureUpdated Events:</h2>
-      <ul>
-        {tyrePressureUpdatedLogs.map((log, index) => (
-          <li key={index}>
-            Tyre {log.returnValues.tyreIndex} Pressure Updated: {log.returnValues.newPressure}
-          </li>
-        ))}
-      </ul>
-      <h2>TyrePressureAlert Events:</h2>
-      <ul>
-        {tyrePressureAlertLogs.map((log, index) => (
-          <li key={index}>
-            Tyre {log.returnValues.tyreIndex} Pressure Alert: {log.returnValues.currentPressure}
-          </li>
-        ))}
-      </ul>
+    </div>
+      {/* <div class="container">
+        <h1>Tyre Pressure Events</h1>
+        <h2>TyrePressureUpdated Events:</h2>
+        <ul>
+          {tyrePressureUpdatedLogs.map((log, index) => (
+            <li key={index}>
+              Tyre {log.returnValues.tyreIndex} Pressure Updated: {log.returnValues.newPressure}
+            </li>
+          ))}
+        </ul>
+        <h2>TyrePressureAlert Events:</h2>
+        <ul>
+          {tyrePressureAlertLogs.map((log, index) => (
+            <li key={index}>
+              Tyre {log.returnValues.tyreIndex} Pressure Alert: {log.returnValues.currentPressure}
+            </li>
+          ))}
+        </ul>
+      </div> */}
     </div>
   );
 }
