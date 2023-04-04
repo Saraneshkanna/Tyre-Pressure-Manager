@@ -119,4 +119,33 @@ div {
   button:hover {
     background-color: #555;
   }
+
+  .table {
+    width: 90%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .table th, .table td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #060606;
+  }
+  
+  .table th {
+    background-color: #e97a0a;
+  }
+  
+  .table tr:hover {
+    background-color: #01caf7;
+  }
+  
+  .table th:first-child, .table td:first-child {
+    border-left: none;
+  }
+  
+  .table th:last-child, .table td:last-child {
+    border-right: none;
+  }
+  
   

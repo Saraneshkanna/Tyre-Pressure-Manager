@@ -8,7 +8,7 @@ const web3 = new Web3(Web3.givenProvider);
 function App(){
   const [tyreIndex, setTyreIndex] = useState(0);
   const [newPressure, setNewPressure] = useState(0);
-  const [tyrePressureReadings, setTyrePressureReadings] = useState([Math.round(Math.random() * 25),Math.round(Math.random() * 25),Math.round(Math.random() * 25),Math.round(Math.random() * 25)]);
+  const [tyrePressureReadings, setTyrePressureReadings] = useState([0,0,0,0]);
   const [tyrePressure, setTyrePressure] = useState(0);
   const [tyrePressureHistory, setTyrePressureHistory] = useState([]);
   
@@ -24,6 +24,9 @@ function App(){
   const [tyrePressureAlertEvent, setTyrePressureAlertEvent] = useState(null);
   const [tyrePressureUpdatedLogs, setTyrePressureUpdatedLogs] = useState([]);
   const [tyrePressureAlertLogs, setTyrePressureAlertLogs] = useState([]);
+
+  const [showTable, setShowTable] = useState(false);
+
 
 
   useEffect(() => {
@@ -112,7 +115,29 @@ function App(){
     }
   };
 
-  
+  const getTyrePressureHistory = async (tyreIndex) => {
+    const history = await contract.methods
+      .getTyrePressureHistory(tyreIndex)
+      .call();
+    setTyrePressureHistory(history);
+  };
+
+  const getAllTyrePressureHistory = async () => {
+    const historyPromises = [];
+    for (let i = 0; i < 4; i++) {
+      historyPromises.push(contract.methods.getTyrePressureHistory(i).call());
+    }
+    const allHistory = await Promise.all(historyPromises);
+    setTyrePressureHistory(allHistory);
+    setShowTable(true);
+
+  };
+
+  const handleHistoryButtonClick = () => {
+    getAllTyrePressureHistory();
+  };
+
+
   const handleSetPressureThreshold = async () => {
     // const value = parseInt(pressureThresholdInput);
     await contract.methods.setPressureThreshold(pressureThresholdInput).send({ from: account });
@@ -126,6 +151,7 @@ function App(){
       await contract.methods.updateTyrePressure(tyreIndex, tyrePressureInput).send({ from: account });
       updateTyrePressure(tyreIndex,tyrePressureInput);
       setTyrePressureInput(0);
+      handleHistoryButtonClick();
   };
 
   const handleChangeTyreIndex = (event) => {
@@ -143,10 +169,6 @@ function App(){
     console.log("Current Threshold Input:", pressureThresholdInput);
   }
 
-  const getTyrePressureHistory = async (tyreIndex) => {
-    const history = await contract.methods.getTyrePressureHistory(tyreIndex).call();
-    setTyrePressureHistory(history);
-  };
 
 
   return (
@@ -210,28 +232,30 @@ function App(){
         </label>
       </div>
     </div>
-      {/* <div class="container">
-        <h1>Tyre Pressure Events</h1>
-        <h2>TyrePressureUpdated Events:</h2>
-        <ul>
-          {tyrePressureUpdatedLogs.map((log, index) => (
-            <li key={index}>
-              Tyre {log.returnValues.tyreIndex} Pressure Updated: {log.returnValues.newPressure}
-            </li>
-          ))}
-        </ul>
-        <h2>TyrePressureAlert Events:</h2>
-        <ul>
-          {tyrePressureAlertLogs.map((log, index) => (
-            <li key={index}>
-              Tyre {log.returnValues.tyreIndex} Pressure Alert: {log.returnValues.currentPressure}
-            </li>
-          ))}
-        </ul>
-      </div> */}
+    <div class="table"> 
+         <button onClick={handleHistoryButtonClick}>Get Tyre History</button>
+            {showTable && (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tyre Index</th>
+                    <th>Tyre Pressure History</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tyrePressureHistory.map((pressureHistory, index) => (
+                    <tr key={index}>
+                      <td>Tyre {index}</td>
+                      <td>{pressureHistory.join(', ')}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
     </div>
+  </div>
   );
-}
+};
 export default App;
 
 
