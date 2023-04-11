@@ -187,10 +187,6 @@ function App(){
         </label>
         <button onClick={handleSetPressureThreshold}>Set Pressure Threshold</button>
     </div>
-    {/* <div class="s1block">
-      <h2>Current Tyre Index: {tyreIndex}</h2>
-      <h2>Current Tyre Input: {tyrePressureInput}</h2>
-    </div> */}
     <div class="container">
       <div class="left">
         <h2>Current Tyre Pressures</h2>
@@ -257,40 +253,3 @@ function App(){
   );
 };
 export default App;
-
-
-// <label>
-//           Tyre Pressure Alert Threshold:
-//           <input type="number" value={pressureThresholdInput} onChange={handleChangeAlertThresholdInput} />
-//         </label>
-//         <button onClick={updateAlertThreshold}>Set Tyre Pressure Alert Threshold</button>
-
-// const handleChangeAlertThresholdInput = (event) => {
-//   setAlertThreshold(parseInt(event.target.value));
-//   console.log("Threshold Value Changed:" , alertThreshold);
-// };
-
-
-
-// const updateAlertThreshold = async () => {
-//   await TyrePressureMonitor.methods.setPressureThresholdInput(alertThreshold).send({ from: account });
-//   setPressureThresholdInput(alertThreshold);
-// };
-
-
-{/* <div>
-<label>
-  Pressure History:
-  <input
-    type="number"
-    value={pressureThresholdInput}
-    onChange={handleThresholdInput}
-  />
-</label>
-</div>
-<button onClick={getTyrePressureHistory(0)}>Get History</button>
-<ul>
-{tyrePressureHistory.map((pressure, index) => (
-<li key={index}>Pressure {index}: {pressure}</li>
-))}
-</ul> */}
